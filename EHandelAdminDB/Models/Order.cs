@@ -23,7 +23,7 @@ public class Order
     [Required]
     public OrderStatus Status { get; set; }
     
-    public decimal TotalAmount => OrderRows.Sum(r => r.UnitPrice * r.Quantity);
+    public decimal TotalAmount  { get; set; }
     
     public Customer? Customer { get; set; }
 

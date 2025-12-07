@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EHandelAdminDB")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed00d621e400172e76a766aeb1db6f45c013bb16")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+919ba8763f771a41fe0e24fc01e854263e6a70a1")]
 [assembly: System.Reflection.AssemblyProductAttribute("EHandelAdminDB")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EHandelAdminDB")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

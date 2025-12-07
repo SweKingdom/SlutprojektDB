@@ -9,6 +9,6 @@ public class Product
     [Required]
     public decimal Pris {get ; set;}
 
-    [Required, StringLength(150)]
+    [Required, MaxLength(150)]
     public string ProductName { get; set; } = null!;
 }
