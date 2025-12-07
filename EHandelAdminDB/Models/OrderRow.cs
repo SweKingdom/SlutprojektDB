@@ -4,6 +4,7 @@ namespace EHandelAdminDB.Models;
 
 public class OrderRow
 {
+    // PK
     public int OrderRowId  { get; set; }
     
     // FK
