@@ -25,7 +25,7 @@ using (var db = new ShopContext())
 
 while (true)
 {
-    Console.WriteLine("\nCommands: Customers | +customer | EditCustomer <Id> | DeleteCustomer <Id> | customerordercounts");
+    Console.WriteLine("\nCommands: customers | +customer | EditCustomer <Id> | DeleteCustomer <Id> | customerordercounts");
     Console.WriteLine("Commands: Orders | OrderDetail <id> | AddOrder");
     Console.WriteLine("Commands: ListProducts | OrderCustomerSearch <id> | obs <status> | listproductsales");
     Console.WriteLine(">");

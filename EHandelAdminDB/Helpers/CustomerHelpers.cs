@@ -5,6 +5,8 @@ namespace EHandelAdminDB.Helpers;
 
 public class CustomerHelpers
 {
+
+
     // Customer List funktion
     public static async Task ListCustomersAsync()
     {
