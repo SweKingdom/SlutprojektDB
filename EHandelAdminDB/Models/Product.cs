@@ -11,4 +11,10 @@ public class Product
 
     [Required, MaxLength(150)]
     public string ProductName { get; set; } = null!;
+    
+    // Foreign Key
+    public int? CategoryId { get; set; }
+
+    // Navigation
+    public Category? Category { get; set; }
 }

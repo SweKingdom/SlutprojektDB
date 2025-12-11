@@ -18,19 +18,20 @@ namespace EHandelAdminDB.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-                        migrationBuilder.Sql(@"
+            migrationBuilder.Sql(@"
             CREATE VIEW IF NOT EXISTS OrderSummaryView AS
             SELECT
                 o.OrderId,
                 o.OrderDate,
-                c.CustomerName AS CustomerName,
-                c.CustomerEmail AS CustomerEmail,
-                IFNULL(SUM(orw.OrderRowQuantity * orw.OrderRowUnitPrice), 0) AS TotalPrice
+                c.Name AS CustomerName,
+                c.Email AS CustomerEmail,
+                IFNULL(SUM(orw.Quantity * orw.UnitPrice), 0) AS TotalPrice
             FROM Orders o
             JOIN Customers c ON c.CustomerId = o.CustomerId
             LEFT JOIN OrderRows orw ON orw.OrderId = o.OrderId
-            GROUP BY o.OrderId, o.OrderDate, c.CustomerName, c.CustomerEmail;
-            ");
+            GROUP BY o.OrderId, o.OrderDate, c.Name, c.Email;
+        ");
+
             
             // AFTER INSERT
             migrationBuilder.Sql(@"

@@ -32,7 +32,8 @@ public class ShopContext : DbContext
                 .HasMaxLength(100);
             e.Property(x => x.CategoryDescription)
                 .HasMaxLength(250);
-            e.HasIndex(x => x.CategoryName).IsUnique();
+            e.HasIndex(x => x.CategoryName)
+                .IsUnique();
             
         });
 
@@ -106,6 +107,10 @@ public class ShopContext : DbContext
             e.Property(x => x.ProductName)
                 .IsRequired()
                 .HasMaxLength(150);
+            e.HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
         
         modelBuilder.Entity<ProductSalesView>(o =>
