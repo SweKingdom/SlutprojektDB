@@ -89,7 +89,7 @@ while (true)
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: Add | List | Exit");
+            Console.WriteLine("\nCommands: Add | List | ListCustomer <id> | Status <id> | Exit");
             Console.WriteLine(">");
             var line = Console.ReadLine();
             if (string.IsNullOrEmpty(line))
@@ -115,6 +115,22 @@ while (true)
                     var pageSizeLoan = int.Parse((Console.ReadLine()));
                     await OrderHelpers.ListOrdersAsync(pageLoan, pageSizeLoan);
                     break;
+                case "listcustomer":
+                    if (parts.Length < 2 || !int.TryParse(parts[1], out var idLOrder))
+                    {
+                        Console.WriteLine("Usage: OrderCustomerSearch <id>");
+                        break;
+                    }
+                    await OrderHelpers.OrderByCustomerAsync(idLOrder);
+                    break;
+                case "status":
+                    if (parts.Length < 2 || !int.TryParse(parts[1], out var idSOrder))
+                    {
+                        Console.WriteLine("Usage: Status <id>");
+                        break;
+                    }
+                    await OrderHelpers.ChangeOrderStatusAsync(idSOrder);
+                    break;
                 default:
                     Console.WriteLine("Unknown command.");
                     break;
@@ -129,7 +145,7 @@ while (true)
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: Add | List | Edit <id> | Delete <id> | Exit");
+            Console.WriteLine("\nCommands: Add | List | Edit <id> | Delete <id> | Search | Exit");
             Console.WriteLine(">");
             var line = Console.ReadLine();
             if (string.IsNullOrEmpty(line))
@@ -170,6 +186,9 @@ while (true)
                     }
                     await CategoryHelpers.DeleteAsync(idDCategory);
                     break;
+                case "search":
+                    await CategoryHelpers.SearchCategoryAsync();
+                    break;
                 default:
                     Console.WriteLine("Unknown command.");
                     break;
@@ -182,7 +201,7 @@ while (true)
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: Add | List | ListSold | Edit <id> | Delete <id> | Exit");
+            Console.WriteLine("\nCommands: Add | List | ListSold | Edit <id> | Delete <id> | Search | Exit");
             Console.WriteLine(">");
             var line = Console.ReadLine();
             if (string.IsNullOrEmpty(line))
@@ -222,6 +241,9 @@ while (true)
                         break;
                     }
                     await ProductHelpers.DeleteProductAsync(idDProduct);
+                    break;
+                case "search":
+                    await ProductHelpers.SearchProductAsync();
                     break;
                 default:
                     Console.WriteLine("Unknown command.");

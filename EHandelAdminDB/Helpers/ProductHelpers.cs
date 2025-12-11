@@ -56,7 +56,7 @@ public class ProductHelpers
             return;
         }
         Console.WriteLine("Available categories:");
-        await ListProductsAsync();
+        await CategoryHelpers.ListAsync();
         Console.WriteLine("Choose CategoryId:");
         var CIDInput = Console.ReadLine()?.Trim() ?? string.Empty;
     
@@ -141,6 +141,32 @@ public class ProductHelpers
         catch (DbUpdateException ex)
         {
             Console.WriteLine(ex.Message);
+        }
+    }
+    
+    
+    
+    public static async Task SearchProductAsync()
+    {
+        Console.WriteLine($"Searching for Product");
+        var product = Console.ReadLine()?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(product) || product.Length > 150)
+        {
+            Console.WriteLine("Invalid Product name. Product name is required (max 100).");
+            return;
+        }
+        using var db = new ShopContext();
+        var products = await db.Products.Where(p => p.ProductName.ToLower().Contains(product.ToLower())).OrderBy(c => c.CategoryId).ToListAsync();
+
+        if (!products.Any())
+        {
+            Console.WriteLine("No product found.");
+        }
+
+        foreach (var p in products)
+        {
+            Console.WriteLine("ProductId | ProductName | Pris");
+            Console.WriteLine($"{p.ProductId} | {p.ProductName} | {p.Pris}");
         }
     }
 

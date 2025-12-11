@@ -26,7 +26,7 @@ public class OrderHelpers
         }
     }
     
-      public static async Task AddOrder() // Change so Customer List function
+    public static async Task AddOrder() // Change so Customer List function
     {
         using var  db = new ShopContext();
         Console.WriteLine("Available Customers");
@@ -109,7 +109,59 @@ public class OrderHelpers
         await db.SaveChangesAsync();
             
         Console.WriteLine($"\nOrder created! OrderId: {order.OrderId}");
-        Console.WriteLine($"Total amount: {order.TotalAmount}");
 
+    }
+    
+    public static async Task OrderByCustomerAsync(int customerId)
+    {
+        using var db = new ShopContext();
+        var orders = await db.Orders
+            .Include(o => o.OrderRows)
+            .Include(o => o.Customer)
+            .Where(o => o.CustomerId == customerId)
+            .OrderBy(o => o.OrderDate)
+            .ToListAsync();
+
+
+        Console.WriteLine("OrderId | OrderDate | Status | CustomerName | TotalAmount");
+        foreach (var order in orders)
+        {
+            Console.WriteLine($"{order.OrderId} | {order.OrderDate} | {order.Status} | {order.Customer.Name} | {order.TotalAmount}");
+        }
+
+    }
+
+    public static async Task ChangeOrderStatusAsync(int id)
+    {
+        using var db = new ShopContext();
+        var order = await db.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+        if (order == null)
+        {
+            Console.WriteLine("Order not found");
+            return;
+        }
+        Console.WriteLine($"\nCurrent Status: {order.Status}");
+        Console.WriteLine("Available Statuses:");
+        
+        var statuses = Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToList();
+        for (int i = 0; i < statuses.Count; i++)
+        {
+            Console.WriteLine($"{i}. {statuses[i]}");
+        }
+        
+        Console.Write("Choose new status: ");
+        if (!int.TryParse(Console.ReadLine(), out int choice) ||
+            choice < 0 || choice >= statuses.Count)
+        {
+            Console.WriteLine("Invalid selection.");
+            return;
+        }
+        order.Status = statuses[choice];
+        await db.SaveChangesAsync();
+
+        Console.WriteLine($"Order {id} updated to status: {order.Status}");
+
+
+        
     }
 }
