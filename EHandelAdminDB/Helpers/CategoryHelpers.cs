@@ -5,13 +5,17 @@ namespace EHandelAdminDB.Helpers;
 
 public class CategoryHelpers
 {
-    // READ: Lista alla kategorier
+
+    /// <summary>
+    /// Lists all categories
+    /// </summary>
     public static async Task ListAsync()
     {
         var db = new ShopContext();
-    
-        // AsNoTracking = snabare för read-only scenarion. ( Ingen change tracking)
-        var rows = await db.Categories.AsNoTracking().OrderBy(category => category.CategoryName).ToListAsync();
+        var rows = await db.Categories
+            .AsNoTracking()
+            .OrderBy(category => category.CategoryName)
+            .ToListAsync();
         Console.WriteLine("Id | Name | Description ");
         foreach (var row in rows)
         {
@@ -19,65 +23,58 @@ public class CategoryHelpers
         }
     }
 
-//CREATE: Lägg till en ny kategori
+    /// <summary>
+    /// Creates a category
+    /// </summary>
     public static async Task AddAsync()
     {
         Console.WriteLine("Name: ");
         var name = Console.ReadLine()?.Trim() ?? string.Empty;
-    
-        // Enkel validering
         if (string.IsNullOrEmpty(name) || name.Length > 100)
         {
             Console.WriteLine("Name is required (max 100).");
             return;
         }
         Console.WriteLine("Description (optional): ");
-        var desc = Console.ReadLine()?.Trim() ?? string.Empty;
-    
+        var desc = Console.ReadLine() ?? string.Empty;
         using var db = new ShopContext();
         await db.Categories.AddAsync(new Category { CategoryName = name, CategoryDescription = desc });
         try
         {
-            // Spara våra ändringar; Trigga en INSERT + all validering/constraints i databasen
             await db.SaveChangesAsync();
             Console.WriteLine("Category added");
         }
         catch (DbUpdateException exception)
         {
-            // Hit kommer vi tex om UNIQUE - Indexet op CategoryName bryts
             Console.WriteLine("Db Error (Maby duplicate?)! "+ exception.GetBaseException().Message);
         }
     }
     
+    /// <summary>
+    /// Edits a cagegorys atributes
+    /// </summary>
+    /// <param name="id">A specified category</param>
     public static async Task EditAsync(int id)
     {
         using var db = new ShopContext();
-    
-        // Hämta raden vi vill uppdatera
         var category = await db.Categories.FirstOrDefaultAsync(x => x.CategoryId == id);
         if (category == null)
         {
             Console.WriteLine("Category not found.");
             return;
         }
-    
-        // Visar nuvarande värden; Uppdatera namn för en specifik category
         Console.WriteLine($"{category.CategoryName} ");
         var name = Console.ReadLine()?.Trim() ?? string.Empty;
         if (!string.IsNullOrEmpty(name))
         {
             category.CategoryName = name;
         }
-    
-        // Uppdaterar description för en specifik category; TODO: FIX ME (NULL, not required)
         Console.WriteLine($"{category.CategoryDescription} ");
         var description = Console.ReadLine()?.Trim() ?? string.Empty;
         if (!string.IsNullOrEmpty(description))
         {
             category.CategoryDescription = description;
         }
-
-        // Uppdaterar 
         try
         {
             await db.SaveChangesAsync();
@@ -89,12 +86,15 @@ public class CategoryHelpers
         }
     }
     
-    
+    /// <summary>
+    /// Deletes a specific category
+    /// </summary>
+    /// <param name="id">A specified category</param>
     public static async Task DeleteAsync(int id)
     {
         using var db = new ShopContext();
-    
-        var category = await db.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
+        var category = await db.Categories
+            .FirstOrDefaultAsync(c => c.CategoryId == id);
         if (category == null)
         {
             Console.WriteLine("Category not found.");
@@ -112,6 +112,9 @@ public class CategoryHelpers
         }
     }
     
+    /// <summary>
+    /// Creates a list of categories that contains the search term
+    /// </summary>
     public static async Task SearchCategoryAsync()
     {
         Console.WriteLine($"Searching for categories");
@@ -122,18 +125,19 @@ public class CategoryHelpers
             return;
         }
         using var db = new ShopContext();
-        var categories = await db.Categories.Where(c => c.CategoryName.ToLower().Contains(category.ToLower())).OrderBy(c => c.CategoryId).ToListAsync();
-
+        var categories = await db.Categories
+            .Where(c => c.CategoryName
+                .ToLower()
+                .Contains(category.ToLower()))
+            .OrderBy(c => c.CategoryId)
+            .ToListAsync();
         if (!categories.Any())
         {
             Console.WriteLine("No categories found.");
         }
-
         foreach (var c in categories)
         {
             Console.WriteLine($"{c.CategoryId} | {c.CategoryName} | {c.CategoryDescription} ");
         }
     }
-
-    
 }

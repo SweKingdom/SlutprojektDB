@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EHandelAdminDB.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251210224720_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251211143441_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,12 @@ namespace EHandelAdminDB.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CustomerSSNHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerSSNSalt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -64,6 +70,9 @@ namespace EHandelAdminDB.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("CustomerId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -110,6 +119,8 @@ namespace EHandelAdminDB.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderDate");
 
                     b.ToTable("Orders");
                 });
@@ -185,6 +196,9 @@ namespace EHandelAdminDB.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductName")
+                        .IsUnique();
 
                     b.ToTable("Products");
                 });

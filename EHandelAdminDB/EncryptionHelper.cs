@@ -1,59 +1,60 @@
 ﻿namespace EHandelAdminDB;
 
 
-//demo-klass som visar symmetrisk kryptering
-//klartext > krypterar > lagra > läsa > dekryptera > klartext
+/// <summary>
+/// Simple symmetric encryption helper using XOR + Base64 encoding
+/// </summary>
 public class EncryptionHelper
 {
-    // en väldigt grundläggande kryptering
+    // A very basic (and insecure) symmetric key used for XOR encryption
     private const byte Key = 0x42; // 66 bytes
 
+    /// <summary>
+    /// Encrypts a plaintext string using XOR and encodes the result in Base64
+    /// </summary>
+    /// <param name="text">The plaintext to encrypt</param>
+    /// <returns>The encrypted Base64 string</returns>
     public static string Encrypt(string text)
     {
         if(string.IsNullOrEmpty(text))
         {
             return text;
         }
-        // steg 1: konvertera texten till bytes
-        // varför? texten är Unicode (cgar/strings)
-        //XOR för att kunna förvränga vår sträng och då behöver vi omvandla texten till en byte array
+        // Step 1: Convert string to bytes
         var bytes = System.Text.Encoding.UTF8.GetBytes(text);
 
-        // steg 2: En logisk operation, olika = 1, lika = 0
-        // varför bytes[i] = (byte) (bytes[i] ^ Key)
-        // - bytes[i] är en byte (0-255)
-        // - Key är också en byte
-        // - bytes[i] ^ Key ger ett int-resultat, så vi castar tillbaka till byte
+        // Step 2: XOR each byte with the static key
         for ( int i = 0; i < bytes.Length; i++ )
         {
             bytes[i] = (byte) (bytes[i] ^ Key);
         }
         
-        // steg 3: för att kunna spara resultatet som text.
-        // Kodar vi bytes till Base64
-        // Efter att vi har gjort XOR kan bytes innehålla obegripliga tecken för text/JSON
+        // Step 3: Convert encrypted bytes to Base64 for safe storage
         return Convert.ToBase64String(bytes);
     }
     
-    public static string Decrypt(string krypteradText)
+    /// <summary>
+    /// Decrypts a Base64-encoded XOR-encrypted string
+    /// </summary>
+    /// <param name="encryptedText">The encrypted Base64 string</param>
+    /// <returns>The decrypted plaintext</returns>
+    public static string Decrypt(string encryptedText)
     {
-        // steg 1
-        if(string.IsNullOrEmpty (krypteradText))
+        // Step 1: Convert Base64 back to raw encrypted bytes
+        if(string.IsNullOrEmpty (encryptedText))
         {
-            return krypteradText;
+            return encryptedText;
         }
 
-        // steg 2
-        // gör om Base64-strängen till bytes igen
-        //XOR tillbaka med samma nyckel 
-        var bytes = Convert.FromBase64String(krypteradText);
+        // Step 2: XOR again with the same key to reverse encryption 
+        var bytes = Convert.FromBase64String(encryptedText);
 
         for(int i  = 0; i < bytes.Length;i++ )
         {
             bytes[i] = (byte)(bytes[i] ^ Key);
         }
 
-        // steg 3
+        // Step 3: Convert bytes back into a string
         return System.Text.Encoding.UTF8.GetString(bytes);
     }
 }

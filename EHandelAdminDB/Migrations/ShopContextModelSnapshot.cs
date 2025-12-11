@@ -50,6 +50,12 @@ namespace EHandelAdminDB.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CustomerSSNHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerSSNSalt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -110,6 +116,8 @@ namespace EHandelAdminDB.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderDate");
 
                     b.ToTable("Orders");
                 });
