@@ -111,6 +111,29 @@ public class CategoryHelpers
             Console.WriteLine(exception.Message);
         }
     }
+    
+    public static async Task SearchCategoryAsync()
+    {
+        Console.WriteLine($"Searching for categories");
+        var category = Console.ReadLine()?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(category) || category.Length > 100)
+        {
+            Console.WriteLine("Invalid Category. Category is required (max 100).");
+            return;
+        }
+        using var db = new ShopContext();
+        var categories = await db.Categories.Where(c => c.CategoryName.ToLower().Contains(category.ToLower())).OrderBy(c => c.CategoryId).ToListAsync();
+
+        if (!categories.Any())
+        {
+            Console.WriteLine("No categories found.");
+        }
+
+        foreach (var c in categories)
+        {
+            Console.WriteLine($"{c.CategoryId} | {c.CategoryName} | {c.CategoryDescription} ");
+        }
+    }
 
     
 }
