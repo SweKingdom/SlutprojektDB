@@ -48,6 +48,8 @@ public class ShopContext : DbContext
             e.Property(x => x.Email)
                 .IsRequired()
                 .HasMaxLength(250);
+            e.HasIndex(x => x.Email)
+                .IsUnique();
 
         });
 
@@ -107,6 +109,8 @@ public class ShopContext : DbContext
             e.Property(x => x.ProductName)
                 .IsRequired()
                 .HasMaxLength(150);
+            e.HasIndex(x => x.ProductName)
+                .IsUnique();
             e.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
