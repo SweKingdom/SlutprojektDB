@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EHandelAdminDB.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251202144508_ProductSalesView")]
-    partial class ProductSalesView
+    [Migration("20251210224720_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -238,9 +238,12 @@ namespace EHandelAdminDB.Migrations
 
             modelBuilder.Entity("EHandelAdminDB.Models.Product", b =>
                 {
-                    b.HasOne("EHandelAdminDB.Models.Category", null)
+                    b.HasOne("EHandelAdminDB.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("EHandelAdminDB.Models.Category", b =>

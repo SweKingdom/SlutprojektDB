@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EHandelAdminDB.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251201114520_AddOrdersummeryView")]
-    partial class AddOrdersummeryView
+    [Migration("20251210225018_CustomerOrderView")]
+    partial class CustomerOrderView
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,6 +68,27 @@ namespace EHandelAdminDB.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("EHandelAdminDB.Models.CustomerOrderCountView", b =>
+                {
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NmbrOfOrders")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("CustomerOrderCountView", (string)null);
+                });
+
             modelBuilder.Entity("EHandelAdminDB.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -82,6 +103,9 @@ namespace EHandelAdminDB.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("OrderId");
 
@@ -165,6 +189,23 @@ namespace EHandelAdminDB.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("EHandelAdminDB.Models.ProductSalesView", b =>
+                {
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalQuantitySold")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("ProductSalesView", (string)null);
+                });
+
             modelBuilder.Entity("EHandelAdminDB.Models.Order", b =>
                 {
                     b.HasOne("EHandelAdminDB.Models.Customer", "Customer")
@@ -197,9 +238,12 @@ namespace EHandelAdminDB.Migrations
 
             modelBuilder.Entity("EHandelAdminDB.Models.Product", b =>
                 {
-                    b.HasOne("EHandelAdminDB.Models.Category", null)
+                    b.HasOne("EHandelAdminDB.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("EHandelAdminDB.Models.Category", b =>

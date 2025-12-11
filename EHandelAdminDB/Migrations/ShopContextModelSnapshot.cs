@@ -235,9 +235,12 @@ namespace EHandelAdminDB.Migrations
 
             modelBuilder.Entity("EHandelAdminDB.Models.Product", b =>
                 {
-                    b.HasOne("EHandelAdminDB.Models.Category", null)
+                    b.HasOne("EHandelAdminDB.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("EHandelAdminDB.Models.Category", b =>
