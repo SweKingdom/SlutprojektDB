@@ -24,23 +24,52 @@ using (var db = new ShopContext())
         Console.WriteLine("Seeded DB");
     }
     
-    // if(await db.Orders.CountAsync() < 100)
-    // {
-    //    var moreOrder = new List<Order>();
-    //    for (int i = 1; i <= 100; i++)
-    //    {
-    //        moreOrder.Add(new Order
-    //        {
-    //            CustomerId = 1,
-    //            OrderDate = DateTime.Now,
-    //            Status = OrderStatus.Pending
-    //        });
-    //    }
-    //    db.Orders.AddRange(moreOrder);
-    //    await db.SaveChangesAsync();
-    //    Console.WriteLine("Seeded db with more orders!");
+    // Seed customers if database is empty
+    if (!db.Customers.Any())
+    {
+        var sampleSsn = "1234567890";
+        var customers = new List<Customer>
+        {
+            new Customer { Name = "John Doe",    Email = "john@example.com",    City = "Stockholm" },
+            new Customer { Name = "Jane Smith",  Email = "jane@example.com",    City = "Gothenburg" },
+            new Customer { Name = "Alice Brown", Email = "alice@example.com",   City = "Malmo" },
+            new Customer { Name = "Bob Johnson", Email = "bob@example.com",     City = "Uppsala" },
+            new Customer { Name = "Charlie Green", Email = "charlie@example.com", City = "Västerås" }
+        };
+        foreach (var c in customers)
+        {
+            if (!string.IsNullOrWhiteSpace(sampleSsn))
+            {
+                var salt = HashingHelper.GenerateSalt();
+                var hash = HashingHelper.HashWithSalt(sampleSsn, salt);
+                c.CustomerSSNSalt = salt;
+                c.CustomerSSNHash = hash;
+            }
+        }
 
-    //}}
+        db.Customers.AddRange(customers);
+        await db.SaveChangesAsync();
+        Console.WriteLine("Seeded 5 customers!");
+    }
+    
+    // Seeded orders
+    if(await db.Orders.CountAsync() < 100)
+    {
+        var moreOrder = new List<Order>();
+        for (int i = 1; i <= 100; i++)
+        {
+            moreOrder.Add(new Order
+            {
+                CustomerId = 1,
+                OrderDate = DateTime.Now,
+                Status = OrderStatus.Pending
+            });
+        }
+        db.Orders.AddRange(moreOrder);
+        await db.SaveChangesAsync();
+        Console.WriteLine("Seeded db with more orders!");
+
+    }
 }
 
 // Main menu LOOP
