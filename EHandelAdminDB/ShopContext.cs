@@ -122,5 +122,11 @@ public class ShopContext : DbContext
             o.HasNoKey();
             o.ToView("ProductSalesView");
         });
+        modelBuilder.Entity<Order>().HasIndex(x => x.OrderDate);
+        modelBuilder.Entity<Order>().HasIndex(x => x.CustomerId);
+        
+        modelBuilder.Entity<Product>().HasIndex(x => x.ProductName);
+        modelBuilder.Entity<Product>().HasIndex(x => x.CategoryId);
+        
     }
 }

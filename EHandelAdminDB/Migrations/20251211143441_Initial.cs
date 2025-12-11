@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EHandelAdminDB.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,9 @@ namespace EHandelAdminDB.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 250, nullable: false),
                     Email = table.Column<string>(type: "TEXT", maxLength: 250, nullable: false),
-                    City = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true)
+                    City = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true),
+                    CustomerSSNHash = table.Column<string>(type: "TEXT", nullable: true),
+                    CustomerSSNSalt = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -118,6 +120,12 @@ namespace EHandelAdminDB.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Customers_Email",
+                table: "Customers",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderRows_OrderId",
                 table: "OrderRows",
                 column: "OrderId");
@@ -133,9 +141,20 @@ namespace EHandelAdminDB.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_OrderDate",
+                table: "Orders",
+                column: "OrderDate");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ProductName",
+                table: "Products",
+                column: "ProductName",
+                unique: true);
         }
 
         /// <inheritdoc />

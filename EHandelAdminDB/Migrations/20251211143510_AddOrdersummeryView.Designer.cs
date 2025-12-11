@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EHandelAdminDB.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20251211003546_AddUniqueConstraints")]
-    partial class AddUniqueConstraints
+    [Migration("20251211143510_AddOrdersummeryView")]
+    partial class AddOrdersummeryView
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,12 @@ namespace EHandelAdminDB.Migrations
 
                     b.Property<string>("City")
                         .HasMaxLength(250)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerSSNHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerSSNSalt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -113,6 +119,8 @@ namespace EHandelAdminDB.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderDate");
 
                     b.ToTable("Orders");
                 });

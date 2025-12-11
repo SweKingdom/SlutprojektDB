@@ -8,6 +8,8 @@ Console.WriteLine("DB: " + Path.Combine(AppContext.BaseDirectory, "shop.db"));
 using (var db = new ShopContext())
 {
     await db.Database.MigrateAsync();
+    
+    // Seed products if database is empty
     if (!db.Products.Any())
     {
         db.Products.AddRange(
@@ -21,8 +23,27 @@ using (var db = new ShopContext())
         await db.SaveChangesAsync();
         Console.WriteLine("Seeded DB");
     }
+    
+    // if(await db.Orders.CountAsync() < 100)
+    // {
+    //    var moreOrder = new List<Order>();
+    //    for (int i = 1; i <= 100; i++)
+    //    {
+    //        moreOrder.Add(new Order
+    //        {
+    //            CustomerId = 1,
+    //            OrderDate = DateTime.Now,
+    //            Status = OrderStatus.Pending
+    //        });
+    //    }
+    //    db.Orders.AddRange(moreOrder);
+    //    await db.SaveChangesAsync();
+    //    Console.WriteLine("Seeded db with more orders!");
+
+    //}}
 }
 
+// Main menu LOOP
 while (true)
 {
     Console.WriteLine("\nCommands: Customer Menu - 1");
@@ -32,10 +53,9 @@ while (true)
     Console.WriteLine("Commands: Exit");
     Console.WriteLine(">");
 
-    var choice = Console.ReadLine();
+    var choice = Console.ReadLine()?.ToLower();
     if (choice == "exit")
         break;
-
     if (choice == "1")
         await CustomerMenu();
     else if (choice == "2")
@@ -45,9 +65,9 @@ while (true)
     else if (choice == "4")
         await ProductMenu();
     else
-        Console.WriteLine("Ogiltigt val.");
-
-
+        Console.WriteLine("Invalid option. Try again.");
+    
+    // Customer menu loop
     static async Task CustomerMenu()
     {
         while (true)
@@ -61,9 +81,8 @@ while (true)
             }
             if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
-                break; // Avsluta programmet, hoppa ur loopen
+                break;
             }
-            // Delar upp raden på mellanslag: tex "edit 2" --> ["edit", "2"]
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var cmd = parts[0].ToLowerInvariant();
             switch (cmd)
@@ -81,15 +100,15 @@ while (true)
                     Console.WriteLine("Unknown command.");
                     break;
             }
-            
         }
     }
     
+    // Order menu loop
     static async Task OrderMenu()
     {
         while (true)
         {
-            Console.WriteLine("\nCommands: Add | List | ListCustomer <id> | Status <id> | Exit");
+            Console.WriteLine("\nCommands: Add | List | ListCustomer <id> | Status <id> | Product <id> | Exit");
             Console.WriteLine(">");
             var line = Console.ReadLine();
             if (string.IsNullOrEmpty(line))
@@ -98,9 +117,8 @@ while (true)
             }
             if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
-                break; // Avsluta programmet, hoppa ur loopen
+                break;
             }
-            // Delar upp raden på mellanslag: tex "edit 2" --> ["edit", "2"]
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var cmd = parts[0].ToLowerInvariant();
             switch (cmd)
@@ -109,10 +127,18 @@ while (true)
                     await OrderHelpers.AddOrder();
                     break;
                 case "list":
+                    int pageLoan;
+                    int pageSizeLoan;
                     Console.WriteLine("Please write the page");
-                    var pageLoan = int.Parse((Console.ReadLine()));
+                    while (!int.TryParse(Console.ReadLine(), out pageLoan))
+                    {
+                        Console.WriteLine("Invalid number. Please enter digits only:");
+                    }
                     Console.WriteLine("Please write the page size");
-                    var pageSizeLoan = int.Parse((Console.ReadLine()));
+                    while (!int.TryParse(Console.ReadLine(), out pageSizeLoan))
+                    {
+                        Console.WriteLine("Invalid number. Please enter digits only:");
+                    }
                     await OrderHelpers.ListOrdersAsync(pageLoan, pageSizeLoan);
                     break;
                 case "listcustomer":
@@ -131,16 +157,23 @@ while (true)
                     }
                     await OrderHelpers.ChangeOrderStatusAsync(idSOrder);
                     break;
+                case "product":
+                    if (parts.Length < 2 || !int.TryParse(parts[1], out var idPOrder))
+                    {
+                        Console.WriteLine("Usage: Product <id>");
+                        break;
+                    }
+                    await OrderHelpers.OrderByProductAsync(idPOrder);
+                    break;
                 default:
                     Console.WriteLine("Unknown command.");
                     break;
             }
-            
         }
     }
     
     
-    
+    // Category Menu loop
     static async Task CategoryMenu()
     {
         while (true)
@@ -154,9 +187,8 @@ while (true)
             }
             if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
-                break; // Avsluta programmet, hoppa ur loopen
+                break;
             }
-            // Delar upp raden på mellanslag: tex "edit 2" --> ["edit", "2"]
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var cmd = parts[0].ToLowerInvariant();
             switch (cmd)
@@ -168,8 +200,6 @@ while (true)
                     await CategoryHelpers.ListAsync();
                     break;
                 case "edit":
-                    // Redigera en category
-                    // Kräver Id efter kommandot "edit"
                     if (parts.Length < 2 || !int.TryParse(parts[1], out var idCategory))
                     {
                         Console.WriteLine("Usage: Edit <id>");
@@ -178,7 +208,6 @@ while (true)
                     await CategoryHelpers.EditAsync(idCategory);
                     break;
                 case "delete":
-                    // Radera en category
                     if (parts.Length < 2 || !int.TryParse(parts[1], out var idDCategory))
                     {
                         Console.WriteLine("Usage: Delete <id>");
@@ -193,10 +222,10 @@ while (true)
                     Console.WriteLine("Unknown command.");
                     break;
             }
-            
         }
     }
     
+    // Product menu loop
     static async Task ProductMenu()
     {
         while (true)
@@ -210,9 +239,8 @@ while (true)
             }
             if (line.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
-                break; // Avsluta programmet, hoppa ur loopen
+                break;
             }
-            // Delar upp raden på mellanslag: tex "edit 2" --> ["edit", "2"]
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var cmd = parts[0].ToLowerInvariant();
             switch (cmd)
@@ -249,7 +277,6 @@ while (true)
                     Console.WriteLine("Unknown command.");
                     break;
             }
-            
         }
     } 
 }
